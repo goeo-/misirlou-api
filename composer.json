@@ -1,0 +1,17 @@
+{
+    "name": "root/misirlou-api",
+    "description": "API for misirlou (backend)",
+    "type": "project",
+    "require": {
+        "league/oauth2-client": "^2.2",
+        "joshcam/mysqli-database-class": "^2.7",
+        "curl/curl": "^1.6"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Morgan Bazalgette",
+            "email": "the@howl.moe"
+        }
+    ]
+}
