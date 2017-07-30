@@ -31,3 +31,23 @@ function error_message($message, $code = 400)
 	]);
 }
 
+/**
+ * @param array $parts
+ */
+function build_where($parts)
+{
+	$x = implode(" AND ", $parts);
+	if ($x)
+		$x = "WHERE " . $x;
+	return $x;
+}
+
+function to_3339($date)
+{
+	return \DateTime::createFromFormat("Y-m-d H:i:s", $date)->format(\DateTime::RFC3339);
+}
+
+function remove_cchars($i)
+{
+	return preg_replace('/[^\PC\s]/u', '', $i);
+}

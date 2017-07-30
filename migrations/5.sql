@@ -1,0 +1,1 @@
+ALTER TABLE tournaments ADD min_team_size INT NOT NULL;

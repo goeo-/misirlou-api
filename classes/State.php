@@ -17,4 +17,17 @@ class State {
 	{
 		$this->db = $db;
 	}
+
+	public function getAccessToken()
+	{
+		$at = $this->db->fetch("SELECT access_token FROM sessions WHERE id = ?", [hash("sha256", @$_SERVER["HTTP_AUTHORIZATION"])]);
+		return @$at["access_token"];
+	}
+
+	public function getSelfID()
+	{
+		$at = $this->db->fetch("SELECT user_id FROM sessions WHERE id = ?", [hash("sha256", @$_SERVER["HTTP_AUTHORIZATION"])]);
+		if (!$at) return 0;
+		return @$at["user_id"];
+	}
 }
