@@ -2,7 +2,7 @@
 
 function run_method($state)
 {
-	$parts = [];
+	$parts = ["t.status != 0"];
 	$params = [$state->getSelfID()];
 
 	if (@$_GET["id"]) {
@@ -15,13 +15,14 @@ function run_method($state)
 	$query = "SELECT
 	t.id, t.name, t.description, t.mode, t.status,
 	t.status_data, t.created_at, t.updated_at,
-	t.team_size, t.min_team_size, tu.team AS my_team
+	t.team_size, t.min_team_size, t.exclusivity_starts,
+	t.exclusivity_ends,	tu.team AS my_team
 FROM tournaments t
 LEFT JOIN teams ON teams.tournament = t.id
-LEFT JOIN team_users tu ON tu.team = teams.id AND tu.user = ?
+LEFT JOIN team_users tu ON tu.team = teams.id AND tu.user = ? AND tu.attributes != 0
  ";
 	$query .= build_where($parts);
-	$query .= " ORDER BY t.id DESC LIMIT $offset, 50";
+	$query .= " ORDER BY t.updated_at DESC LIMIT $offset, 50";
 
 	$results = $state->db->fetchAll($query, $params);
 	array_walk($results, 'walker');
