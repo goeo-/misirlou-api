@@ -16,7 +16,7 @@ function run_method($state)
 	t.id, t.name, t.description, t.mode, t.status,
 	t.status_data, t.created_at, t.updated_at,
 	t.team_size, t.min_team_size, t.exclusivity_starts,
-	t.exclusivity_ends,	tu.team AS my_team
+	t.exclusivity_ends,	tu.team AS my_team, teams.name as my_team_name
 FROM tournaments t
 LEFT JOIN teams ON teams.tournament = t.id
 LEFT JOIN team_users tu ON tu.team = teams.id AND tu.user = ? AND tu.attributes != 0
@@ -50,4 +50,8 @@ function walker(&$el)
 
 	$el["created_at"] = to_3339($el["created_at"]);
 	$el["updated_at"] = to_3339($el["updated_at"]);
+
+	if ($el["my_team"] !== null) {
+		$el["my_team"] = (int) $el["my_team"];
+	}
 }
