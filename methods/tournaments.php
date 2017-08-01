@@ -3,7 +3,7 @@
 function run_method($state)
 {
 	$parts = ["t.status != 0"];
-	$params = [$state->getSelfID()];
+	$params = [];
 
 	if (@$_GET["id"]) {
 		$parts[] = "t.id = ?";
