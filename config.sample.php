@@ -15,6 +15,7 @@ $config = [
 	"sentry" => [
 		"dsn" => "",
 	],
+	"store_tokens" => "https://tourn.ripple.moe/store_tokens",
 ];
 
 define("DATABASE_HOST", $config["db"]["host"]);

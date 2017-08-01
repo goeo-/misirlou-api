@@ -9,6 +9,8 @@ function run_method($state)
 		return;
 	}
 
+	global $config;
+
 	try {
 		$provider = get_oauth_provider();
 		// retrieve access token from the ripple server
@@ -22,7 +24,7 @@ function run_method($state)
 			return;
 		}
 		$session_token = create_session($user->id, $token, $state->db);
-		header("Location: /store_tokens?session=" . $session_token . "&access=" . $token);
+		header("Location: " . $config["store_tokens"] . "?session=" . $session_token . "&access=" . $token);
 	} catch (\League\OAuth2\Client\Provider\Exception\IdentityProviderException $e) {
 		error_message($e->getMessage());
 	}
