@@ -45,11 +45,11 @@ function run_method($state)
 			"category" => (int) $map->category,
 		];
 	}
-	$inserts   = array_unique($inserts);
+	$inserts   = array_slice(array_unique($inserts), 0, $tourn["max_beatmap_requests"]);
 	// We need array_values because when array_unique detects a duplicate, it
 	// converts the array to an assoc array, and thus in the response it is
-	// returned as an object, not a
-	$retValues = array_values(array_unique($retValues, SORT_REGULAR));
+	// returned as an object, not an array.
+	$retValues = array_slice(array_values(array_unique($retValues, SORT_REGULAR)), 0, $tourn["max_beatmap_requests"]);
 
 	$state->db->execute("DELETE FROM beatmap_requests WHERE user = ? AND tournament = ?", [$uid, $tournID]);
 
