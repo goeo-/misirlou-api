@@ -10,13 +10,14 @@ function run_method($state)
 		$params[] = $_GET["id"];
 	}
 
-	$offset = min((int)@$_GET["p"], 0) * 50;
+	$offset = max((int)@$_GET["p"], 0) * 50;
 
 	$query = "SELECT
 	t.id, t.name, t.description, t.mode, t.status,
 	t.status_data, t.created_at, t.updated_at,
 	t.team_size, t.min_team_size, t.exclusivity_starts,
-	t.exclusivity_ends,	tu.team AS my_team, teams.name as my_team_name
+	t.exclusivity_ends,	tu.team AS my_team, teams.name as my_team_name,
+	t.max_beatmap_requests
 FROM tournaments t
 LEFT JOIN teams ON teams.tournament = t.id
 LEFT JOIN team_users tu ON tu.team = teams.id AND tu.user = ? AND tu.attributes != 0
@@ -35,11 +36,12 @@ LEFT JOIN team_users tu ON tu.team = teams.id AND tu.user = ? AND tu.attributes 
 
 function walker(&$el)
 {
-	$el["id"]     = (int) $el["id"];
-	$el["mode"]   = (int) $el["mode"];
-	$el["status"] = (int) $el["status"];
-	$el["team_size"] = (int) $el["team_size"];
-	$el["min_team_size"] = (int) $el["min_team_size"];
+	$el["id"]                   = (int) $el["id"];
+	$el["mode"]                 = (int) $el["mode"];
+	$el["status"]               = (int) $el["status"];
+	$el["team_size"]            = (int) $el["team_size"];
+	$el["min_team_size"]        = (int) $el["min_team_size"];
+	$el["max_beatmap_requests"] = (int) $el["max_beatmap_requests"];
 
 	if (empty($el["status_data"])) {
 		$el["status_data"] = null;

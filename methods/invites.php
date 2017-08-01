@@ -2,7 +2,7 @@
 
 function run_method($state)
 {
-	$offset = min((int)@$_GET["p"], 0) * 50;
+	$offset = max((int)@$_GET["p"], 0) * 50;
 
 	$query = "SELECT
 	t.id as tourn_id, t.name as tourn_name,
@@ -14,7 +14,6 @@ LEFT JOIN teams ON teams.tournament = t.id
 LEFT JOIN team_users tu ON tu.team = teams.id
 WHERE tu.user = ? AND tu.attributes = 0 AND t.status = 1
 ORDER BY t.exclusivity_starts ASC LIMIT $offset, 50";
-
 
 
 	$results = $state->db->fetchAll($query, [$state->getSelfID()]);

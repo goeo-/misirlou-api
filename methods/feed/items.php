@@ -8,7 +8,7 @@ function run_method($state)
 		return;
 	}
 
-	$offset = min((int)@$_GET["p"], 0) * 50;
+	$offset = max((int)@$_GET["p"], 0) * 50;
 
 	$elements = $state->db->fetchAll("SELECT id, content, created_at, author FROM feed_items WHERE tournament = ?
 ORDER BY created_at DESC LIMIT $offset, 50", [$tournID]);
