@@ -23,7 +23,7 @@ FROM tournaments t
 	$query .= " GROUP BY t.id ORDER BY t.updated_at DESC LIMIT $offset, 50";
 
 	$results = $state->db->fetchAll($query, $params);
-	array_walk($results, 'walker', $state);
+	array_walk($results, 'walker', [$state, $state->getSelfID()]);
 
 	echo json_encode([
 		"ok" => true,
@@ -31,7 +31,7 @@ FROM tournaments t
 	], JSON_HEX_TAG);
 }
 
-function walker(&$el, $key, $state)
+function walker(&$el, $key, $stateUser)
 {
 	$el["id"]                   = (int) $el["id"];
 	$el["mode"]                 = (int) $el["mode"];
@@ -50,11 +50,11 @@ function walker(&$el, $key, $state)
 	$el["created_at"] = to_3339($el["created_at"]);
 	$el["updated_at"] = to_3339($el["updated_at"]);
 
-	$myTeam = $state->db->fetch("SELECT tu.team AS my_team, teams.name as my_team_name
+	$myTeam = $stateUser[0]->db->fetch("SELECT tu.team AS my_team, teams.name as my_team_name
 FROM team_users tu
 INNER JOIN teams ON teams.id = tu.team
-WHERE teams.tournament = ? AND tu.attributes > 0
-LIMIT 1", [$el["id"]]);
+WHERE teams.tournament = ? AND tu.attributes > 0 AND tu.user = ?
+LIMIT 1", [$el["id"], $stateUser[1]]);
 
 	if ($myTeam) {
 		$el["my_team"] = (int) $myTeam["my_team"];
