@@ -16,14 +16,14 @@ function run_method($state)
 	t.id, t.name, t.description, t.mode, t.status,
 	t.status_data, t.created_at, t.updated_at,
 	t.team_size, t.min_team_size, t.exclusivity_starts,
-	t.exclusivity_ends,	tu.team AS my_team, teams.name as my_team_name,
+	t.exclusivity_ends,	MAX(tu.team) AS my_team, teams.name as my_team_name,
 	t.max_beatmap_requests
 FROM tournaments t
 LEFT JOIN teams ON teams.tournament = t.id
 LEFT JOIN team_users tu ON tu.team = teams.id AND tu.user = ? AND tu.attributes != 0
- ";
+";
 	$query .= build_where($parts);
-	$query .= " ORDER BY t.updated_at DESC LIMIT $offset, 50";
+	$query .= " GROUP BY t.id ORDER BY t.updated_at DESC LIMIT $offset, 50";
 
 	$results = $state->db->fetchAll($query, $params);
 	array_walk($results, 'walker');

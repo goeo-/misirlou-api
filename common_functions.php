@@ -44,6 +44,9 @@ function build_where($parts)
 
 function to_3339($date)
 {
+	if ($date === null) {
+		return "";
+	}
 	return \DateTime::createFromFormat("Y-m-d H:i:s", $date)->format(\DateTime::RFC3339);
 }
 
