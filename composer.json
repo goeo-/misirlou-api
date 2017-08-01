@@ -5,7 +5,8 @@
     "require": {
         "league/oauth2-client": "^2.2",
         "joshcam/mysqli-database-class": "^2.7",
-        "curl/curl": "^1.6"
+        "curl/curl": "^1.6",
+        "sentry/sentry": "^1.7"
     },
     "license": "MIT",
     "authors": [

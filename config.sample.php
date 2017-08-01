@@ -12,6 +12,9 @@ $config = [
 		"client_secret" => "",
 		"redirect_uri"  => "https://localhost/api/oauth_flow_finish"
 	],
+	"sentry" => [
+		"dsn" => "",
+	],
 ];
 
 define("DATABASE_HOST", $config["db"]["host"]);

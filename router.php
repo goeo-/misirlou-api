@@ -27,6 +27,8 @@ try {
 
 	run_method($state);
 } catch (Exception $e) {
-	// TODO: Log to sentry
+	if (isset($sentry)) {
+		$sentry->captureException($e);
+	}
 	error_message("server-side error", 500);
 }
