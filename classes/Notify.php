@@ -59,9 +59,6 @@ function Notify(NotifySettings $settings) {
 	$c->setOpt(CURLOPT_RETURNTRANSFER, true);
 	$c->setOpt(CURLOPT_URL, "https://fcm.googleapis.com/fcm/send");
 	$c->setOpt(CURLOPT_POST, true);
-	$c->setOpt(CURLOPT_VERBOSE, true);
-	$verbose = fopen('/home/howl/meme.txt', 'w');
-	$c->setOpt(CURLOPT_STDERR, $verbose);
 
 	$i = 0;
 	for (;;) {
