@@ -45,7 +45,7 @@ function check_invalid_state()
 function create_session($user_id, $access_token, $db)
 {
 	$token = random_str(32);
-	$db->execute("INSERT INTO sessions(id, user_id, access_token) VALUES (?, ?, ?)", [
+	$db->execute("INSERT INTO sessions(id, user_id, access_token, fcm_token) VALUES (?, ?, ?, '')", [
 		hash("sha256", $token),
 		$user_id,
 		$access_token,
