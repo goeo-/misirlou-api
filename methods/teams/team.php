@@ -15,18 +15,6 @@ function run_method($state) {
 
 	$members = $state->db->fetchAll("SELECT attributes, user FROM team_users WHERE team = ?", $teamID);
 
-	$found = false;
-	foreach ($members as $member) {
-		if ($member["user"] == $uid) {
-			$found = true;
-			break;
-		}
-	}
-	if (!$found) {
-		error_message("Team does not exist or you are not a member of it", 403);
-		return;
-	}
-
 	array_walk($members, "member_walker");
 
 	$team = $state->db->fetch(
