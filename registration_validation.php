@@ -2,7 +2,7 @@
 
 require_once __DIR__ . "/classes/Status.php";
 
-function validate_registration($state, $tournID, $uid) {
+function validate_registration($state, $tournID, $uid, $minStatus = 1) {
 	// Get information about our tournament
 	$tourn = $state->db->fetch("SELECT status, created_at, team_size, min_team_size, exclusivity_starts, exclusivity_ends FROM tournaments WHERE id = ?", [$tournID]);
 	if (!$tourn || $tourn["status"] == Status::Organising) {
@@ -13,7 +13,7 @@ function validate_registration($state, $tournID, $uid) {
 	$starts = $tourn["exclusivity_starts"];
 	$ends   = $tourn["exclusivity_ends"];
 
-	if ($tourn["status"] > 2) { // TODO make this for registrations only, not invites
+	if ($tourn["status"] > $minStatus) {
 		error_message("No more registrations are allowed.", 403);
 		return false;
 	}

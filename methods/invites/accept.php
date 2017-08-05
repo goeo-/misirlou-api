@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . "/../../registration_validation.php";
+require_once __DIR__ . "/../../classes/Status.php";
 
 function run_method($state) {
 	$tok = $state->getAccessToken();
@@ -29,7 +30,7 @@ function run_method($state) {
 
 	$tournID = $state->db->fetch("SELECT tournament FROM teams WHERE id = ? LIMIT 1", $teamID)["tournament"];
 
-	if (!validate_registration($state, $tournID, $uid)) {
+	if (!validate_registration($state, $tournID, $uid, Status::RegClosedRequestsOpen)) {
 		return;
 	}
 

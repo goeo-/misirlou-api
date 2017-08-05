@@ -3,8 +3,9 @@
 class Status {
 	const Organising = 0;
 	const Open = 1;
-	const RegClosed = 2;
-	const AwaitRound = 3;
-	const Playing = 4;
-	const Closed = 5;
+	const RegClosedRequestsOpen = 2;
+	const RegClosed = 3;
+	const AwaitRound = 4;
+	const Playing = 5;
+	const Closed = 6;
 }

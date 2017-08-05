@@ -21,11 +21,10 @@ function run_method($state)
 		error_message("Tournament does not exist.");
 		return;
 	}
-	// TODO: temporary fix
-	/*if ($tourn["max_beatmap_requests"] < 1 || $tourn["status"] != Status::Open) {
+	if ($tourn["max_beatmap_requests"] < 1 || $tourn["status"] > Status::RegClosedRequestsOpen) {
 		error_message("Tournament does not accept beatmap requests.");
 		return;
-	}*/
+	}
 
 	// Decode POST body and check tournament is set
 	$maps = json_decode(file_get_contents('php://input'));
