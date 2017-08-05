@@ -12,7 +12,7 @@ function run_method($state)
 FROM tournaments t
 LEFT JOIN teams ON teams.tournament = t.id
 LEFT JOIN team_users tu ON tu.team = teams.id
-WHERE tu.user = ? AND tu.attributes = 0 AND t.status = 1
+WHERE tu.user = ? AND tu.attributes = 0
 ORDER BY t.exclusivity_starts ASC LIMIT $offset, 50";
 
 

@@ -13,7 +13,7 @@ function validate_registration($state, $tournID, $uid) {
 	$starts = $tourn["exclusivity_starts"];
 	$ends   = $tourn["exclusivity_ends"];
 
-	if ($tourn["status"] > Status::Open) {
+	if ($tourn["status"] > 2) { // TODO make this for registrations only, not invites
 		error_message("No more registrations are allowed.", 403);
 		return false;
 	}
