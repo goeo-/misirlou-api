@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . "/../../classes/Notify.php";
+
 function run_method($state)
 {
 	$team = (int) @$_GET["team"];
@@ -18,7 +20,7 @@ function run_method($state)
 		return;
 	}
 
-	$teamInfo = $state->db->fetch("SELECT tournament, captain FROM teams WHERE id = ?", $team);
+	$teamInfo = $state->db->fetch("SELECT tournament, captain, name FROM teams WHERE id = ?", $team);
 	if (!$teamInfo || $uid != $teamInfo["captain"]) {
 		error_message("Team does not exist.", 404);
 		return;
@@ -43,6 +45,15 @@ function run_method($state)
 		$team,
 		$target,
 	]);
+
+	// Notify users of invites
+	$sett = new NotifySettings();
+	$sett->getUsers($state, [$target]);
+	$sett->title = "You just got invited!";
+	$sett->body = "Would you like to join " . $teamInfo["name"];
+	$sett->action = "https://tourn.ripple.moe/invites"; // TODO: HARDCODE
+	$sett->icon = "https://tourn.ripple.moe/static/favicon.png"; // TODO: HARDCODE
+	Notify($sett);
 
 	echo json_encode([
 		"ok" => true,

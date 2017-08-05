@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . "/../../registration_validation.php";
+require_once __DIR__ . "/../../classes/Notify.php";
 
 function run_method($state)
 {
@@ -92,6 +93,16 @@ function run_method($state)
 	}
 
 	$state->db->execute("INSERT INTO team_users(team, attributes, user) VALUES " . implode(", ", $vals));
+
+	// Notify users of invites
+	$sett = new NotifySettings();
+	$sett->getUsers($state, $members);
+	$sett->title = "You just got invited!";
+	$sett->body = "Would you like to join " . $user->username . "'s team?";
+	$sett->action = "https://tourn.ripple.moe/invites"; // TODO: HARDCODE
+	$sett->icon = "https://tourn.ripple.moe/static/favicon.png"; // TODO: HARDCODE
+	Notify($sett);
+
 	echo json_encode([
 		"ok" => true,
 		"team_id" => $id,

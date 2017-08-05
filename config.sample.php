@@ -16,6 +16,7 @@ $config = [
 		"dsn" => "",
 	],
 	"store_tokens" => "https://tourn.ripple.moe/store_tokens",
+	"fcm_token" => "", // https://console.firebase.google.com/project/SOMETHING/settings/cloudmessaging/ - Server Key
 ];
 
 define("DATABASE_HOST", $config["db"]["host"]);
