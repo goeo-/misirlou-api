@@ -27,13 +27,18 @@ function run_method($state) {
 		return;
 	}
 
-	$info = $state->db->fetch("SELECT tu.attributes, teams.captain
+	$info = $state->db->fetch("SELECT tu.attributes, teams.captain, teams.tournament
 FROM team_users tu
 INNER JOIN teams ON tu.team = teams.id
 WHERE tu.user = ? AND tu.team = ?", [$target, $team]);
 
 	if (!$info) {
 		error_message("Either that team does not exist or the user is not enrolled in it.", 404);
+		return;
+	}
+
+	if ($state->db->fetch("SELECT status FROM tournaments WHERE id = ?")["status"] >= Status::RegClosed) {
+		error_message("You can't kick team members at this stage of the tournament", 403);
 		return;
 	}
 
