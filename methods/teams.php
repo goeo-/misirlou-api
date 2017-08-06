@@ -9,7 +9,8 @@ function run_method($state)
 	$teams = $state->db->fetchAll("SELECT
 	id, name, captain, created_at
 FROM teams
-LIMIT $offset, 50");
+LIMIT $offset, 50
+WHERE tournament = ?", [$tourn_id]);
 
 	array_walk($teams, "walker");
 
