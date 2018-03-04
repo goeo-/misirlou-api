@@ -31,7 +31,7 @@ class RippleAPI {
 
 		// create curl and set necessary headers and options
 		$c = new \Curl\Curl();
-		$c->setUserAgent("RippleAPIPHPClient/1.0 MisilrouAPI/1.0");
+		$c->setUserAgent("RippleAPIPHPClient/1.0 MisirlouAPI/1.0");
 		$c->setHeader("Authorization", "Bearer " . $token);
 		$c->setOpt(CURLOPT_ENCODING, "gzip");
 		$c->setOpt(CURLOPT_RETURNTRANSFER, true);
