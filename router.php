@@ -15,6 +15,8 @@ if (strpos($request_uri, "?") !== FALSE) {
 
 $method_path = realpath(__DIR__ . "/methods" . $request_uri . ".php");
 
+header("Content-Type: application/json; charset=utf-8");
+
 // make sure the path is valid
 if (strpos($method_path, __DIR__ . "/methods/") === FALSE) {
 	error_message("not found", 404);
