@@ -16,7 +16,7 @@ function run_method($state)
 	t.id, t.name, t.description, t.mode, t.status,
 	t.status_data, t.created_at, t.updated_at,
 	t.team_size, t.min_team_size, t.exclusivity_starts,
-	t.exclusivity_ends,	t.max_beatmap_requests
+	t.exclusivity_ends
 FROM tournaments t
 ";
 	$query .= build_where($parts);
@@ -38,7 +38,6 @@ function walker(&$el, $key, $stateUser)
 	$el["status"]               = (int) $el["status"];
 	$el["team_size"]            = (int) $el["team_size"];
 	$el["min_team_size"]        = (int) $el["min_team_size"];
-	$el["max_beatmap_requests"] = (int) $el["max_beatmap_requests"];
 
 	if (empty($el["status_data"])) {
 		$el["status_data"] = null;
