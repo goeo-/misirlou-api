@@ -4,10 +4,12 @@ package http
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"net"
 	"os"
 	"runtime/debug"
+	"strconv"
 	"time"
 
 	"github.com/erikdubbelboer/fasthttp"
@@ -131,14 +133,26 @@ func (c *Context) SetBody(b []byte) {
 	c.ctx.Response.SetBody(b)
 }
 
+// SetJSON sets the response body to the given JSON value.
+func (c *Context) SetJSON(code int, v interface{}) {
+	c.ctx.Response.ResetBody()
+	c.ctx.SetContentType("application/json; charset=utf-8")
+	c.SetCode(code)
+	err := json.NewEncoder(c.ctx.Response.BodyWriter()).Encode(v)
+	if err != nil {
+		c.Error(err)
+	}
+}
+
 // Query retrieves a value from the query string.
 func (c *Context) Query(s string) []byte {
 	return c.ctx.QueryArgs().PeekBytes(s2b(s))
 }
 
-// Form retrieves a value from the POSTed data, encoded through form encoding.
-func (c *Context) Form(s string) []byte {
-	return c.ctx.PostArgs().PeekBytes(s2b(s))
+// QueryInt retrieves a value from the query int, and parses it as an int.
+func (c *Context) QueryInt(s string) int {
+	i, _ := strconv.Atoi(b2s(c.Query(s)))
+	return i
 }
 
 var ipHeaders = [...][]byte{

@@ -7,6 +7,8 @@ import (
 	"github.com/erikdubbelboer/fasthttp"
 	"zxq.co/ripple/misirlou-api/http"
 	"zxq.co/ripple/misirlou-api/models"
+
+	_ "zxq.co/ripple/misirlou-api/http/api"
 )
 
 func main() {
