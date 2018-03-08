@@ -1,0 +1,11 @@
+[[constraint]]
+	name = "github.com/thehowl/fasthttprouter"
+	version = "0.2.1"
+
+[[constraint]]
+	name = "github.com/erikdubbelboer/fasthttp"
+	branch = "master"
+
+[[constraint]]
+	name = "github.com/jinzhu/gorm"
+	version = "v1.9.1"
