@@ -4,6 +4,8 @@ package http
 
 import (
 	"bytes"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"net"
@@ -92,8 +94,10 @@ func wrapper(o Options, f func(*Context)) fasthttp.RequestHandler {
 type Context struct {
 	Options
 
-	ctx *fasthttp.RequestCtx
-	ip  net.IP
+	sessCached bool
+	sess       *models.Session
+	ctx        *fasthttp.RequestCtx
+	ip         net.IP
 }
 
 // Header retrieves a header from the request.
@@ -112,11 +116,15 @@ func (c *Context) SetCode(i int) {
 	c.ctx.SetStatusCode(i)
 }
 
+func (c *Context) reportError(err error) {
+	fmt.Fprintln(os.Stderr, err)
+}
+
 // Error closes the request with a 500 code and prints the error to stderr.
 func (c *Context) Error(err error) {
 	c.SetCode(500)
 	c.WriteString("Internal Server Error")
-	fmt.Fprintln(os.Stderr, err)
+	c.reportError(err)
 }
 
 // WriteString writes s to the response. We provide WriteString and not Write
@@ -203,4 +211,24 @@ func (c *Context) IP() net.IP {
 
 	c.ip = ip
 	return ip
+}
+
+// Session retrieves the Session related to this context.
+func (c *Context) Session() *models.Session {
+	if c.sessCached {
+		return c.sess
+	}
+	c.sessCached = true
+	// hash the authorization header, which contains the key
+	hash := sha256.Sum256(c.ctx.Request.Header.Peek("Authorization"))
+	encoded := hex.EncodeToString(hash[:])
+	// find the session in the db
+	sess, err := c.DB.Session(encoded)
+	if err != nil {
+		c.reportError(err)
+		return nil
+	}
+	// cache it
+	c.sess = sess
+	return sess
 }
