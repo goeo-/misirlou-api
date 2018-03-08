@@ -59,18 +59,25 @@ type Tournament struct {
 	CreatedAt         time.Time     `json:"created_at"`
 }
 
-// Tournaments returns the tournaments sorted by their ID. If the id is given,
-// at most one tournament will be returned, of the given ID. Tournaments with
-// status = 0 will not be shown.
-func (db *DB) Tournaments(id int, page int) ([]Tournament, error) {
-	q := db.db.Where("status != ?", id)
-	if id != 0 {
-		q = q.Where("id = ?", id)
-	}
+// Tournaments returns the tournaments sorted by their ID.
+func (db *DB) Tournaments(page int) ([]Tournament, error) {
 	tourns := make([]Tournament, 0, 50)
-	err := q.Order("id desc").Offset(positivePage(page)).Limit(50).
-		Find(&tourns).Error
+	err := db.db.Order("id desc").Offset(positivePage(page)).Limit(50).
+		Find(&tourns, "status != 0").Error
 	return tourns, err
+}
+
+// Tournament returns a single tournament knowing its ID.
+func (db *DB) Tournament(id int) (*Tournament, error) {
+	var t Tournament
+	res := db.db.Where("status != 0").First(&t, id)
+	if res.Error != nil {
+		if res.RecordNotFound() {
+			return nil, nil
+		}
+		return nil, res.Error
+	}
+	return &t, nil
 }
 
 // TournamentRules represents a collection rules set out for a given tournament,
@@ -82,6 +89,7 @@ type TournamentRules struct {
 
 // TournamentRules returns the tournament rules for the given tournament.
 func (db *DB) TournamentRules(id int) (*TournamentRules, error) {
+	// make sure the status of the tournament is not 0
 	var status []int
 	err := db.db.Table("tournaments").Where("id = ?", id).
 		Pluck("status", &status).Error
@@ -91,12 +99,13 @@ func (db *DB) TournamentRules(id int) (*TournamentRules, error) {
 	if len(status) == 0 || status[0] == 0 {
 		return nil, nil
 	}
+	// fetch tourn rules
 	var rules TournamentRules
 	res := db.db.First(&rules)
-	if res.RecordNotFound() {
-		return nil, nil
-	}
 	if res.Error != nil {
+		if res.RecordNotFound() {
+			return nil, nil
+		}
 		return nil, res.Error
 	}
 	return &rules, nil

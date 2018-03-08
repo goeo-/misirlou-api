@@ -155,6 +155,13 @@ func (c *Context) QueryInt(s string) int {
 	return i
 }
 
+// ParamInt takes a named parameter set in the route of the request, and parses
+// it as an int.
+func (c *Context) ParamInt(s string) int {
+	i, _ := strconv.Atoi(c.ctx.UserValue(s).(string))
+	return i
+}
+
 var ipHeaders = [...][]byte{
 	[]byte("X-Forwarded-For"),
 	[]byte("X-Real-IP"),
