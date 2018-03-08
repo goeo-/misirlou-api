@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	// import support for mysql
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
@@ -59,4 +60,11 @@ func (db *DB) runMigrations() error {
 			return db.db.Error
 		}
 	}
+}
+
+func positivePage(page int) int {
+	if page < 0 {
+		return 0
+	}
+	return page
 }

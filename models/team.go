@@ -13,10 +13,7 @@ type Team struct {
 
 // Teams returns at most 50 teams, given the where conditions and the page.
 func (db *DB) Teams(t *Team, page int) ([]Team, error) {
-	if page < 0 {
-		page = 0
-	}
 	teams := make([]Team, 0, 50)
-	res := db.db.Where(t).Offset(page * 50).Limit(50).Find(&teams)
+	res := db.db.Where(t).Offset(positivePage(page) * 50).Limit(50).Find(&teams)
 	return teams, res.Error
 }
