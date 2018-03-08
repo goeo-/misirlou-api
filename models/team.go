@@ -11,8 +11,8 @@ type Team struct {
 	CreatedAt  time.Time `json:"created_at"`
 }
 
-// GetTeams returns at most 50 teams, given the where conditions and the page.
-func (db *DB) GetTeams(t *Team, page int) ([]Team, error) {
+// Teams returns at most 50 teams, given the where conditions and the page.
+func (db *DB) Teams(t *Team, page int) ([]Team, error) {
 	if page < 0 {
 		page = 0
 	}

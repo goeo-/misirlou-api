@@ -7,7 +7,7 @@ import (
 
 // Teams fetches the teams that are playing in the given tournament ID.
 func Teams(c *http.Context) {
-	teams, err := c.DB.GetTeams(&models.Team{
+	teams, err := c.DB.Teams(&models.Team{
 		Tournament: c.QueryInt("tourn_id"),
 	}, c.QueryInt("p"))
 	if err != nil {
