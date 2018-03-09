@@ -68,3 +68,10 @@ func positivePage(page int) int {
 	}
 	return page
 }
+
+func ignoreNotFound(db *gorm.DB) error {
+	if db.RecordNotFound() {
+		return nil
+	}
+	return db.Error
+}

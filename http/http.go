@@ -141,15 +141,31 @@ func (c *Context) SetBody(b []byte) {
 	c.ctx.Response.SetBody(b)
 }
 
-// SetJSON sets the response body to the given JSON value.
-func (c *Context) SetJSON(code int, v interface{}) {
+var newline = []byte{'\n'}
+
+// SetJSONWithCode sets the response body to the given JSON value, as well
+// as the HTTP response code.
+func (c *Context) SetJSONWithCode(v interface{}, code int) {
 	c.ctx.Response.ResetBody()
 	c.ctx.SetContentType("application/json; charset=utf-8")
 	c.SetCode(code)
-	err := json.NewEncoder(c.ctx.Response.BodyWriter()).Encode(v)
+	w := c.ctx.Response.BodyWriter()
+	err := json.NewEncoder(w).Encode(v)
 	if err != nil {
 		c.Error(err)
 	}
+	c.ctx.Response.AppendBody(newline)
+}
+
+// SetJSON sets the response body to the given JSON value. The second value
+// defines whether the response code should be 404 of 200. It's useful to
+// quickly set the code to 404 when the value is null: c.SetJSON(t, t == nil)
+func (c *Context) SetJSON(v interface{}, is404 bool) {
+	code := 200
+	if is404 {
+		code = 404
+	}
+	c.SetJSONWithCode(v, code)
 }
 
 // Query retrieves a value from the query string.

@@ -11,7 +11,7 @@ func Tournaments(c *http.Context) {
 		c.Error(err)
 		return
 	}
-	c.SetJSON(200, tourns)
+	c.SetJSON(tourns, false)
 }
 
 // Tournament retrieves a single tournament knowing its ID.
@@ -21,11 +21,7 @@ func Tournament(c *http.Context) {
 		c.Error(err)
 		return
 	}
-	if tourn == nil {
-		c.SetJSON(404, nil)
-	} else {
-		c.SetJSON(200, tourn)
-	}
+	c.SetJSON(tourn, tourn == nil)
 }
 
 // TournamentRules fetches the rules of a tournament.
@@ -35,11 +31,7 @@ func TournamentRules(c *http.Context) {
 		c.Error(err)
 		return
 	}
-	if rules == nil {
-		c.SetJSON(404, nil)
-	} else {
-		c.SetJSON(200, rules)
-	}
+	c.SetJSON(rules, rules == nil)
 }
 
 func init() {

@@ -72,10 +72,7 @@ func (db *DB) Tournament(id int) (*Tournament, error) {
 	var t Tournament
 	res := db.db.Where("status != 0").First(&t, id)
 	if res.Error != nil {
-		if res.RecordNotFound() {
-			return nil, nil
-		}
-		return nil, res.Error
+		return nil, ignoreNotFound(res)
 	}
 	return &t, nil
 }
@@ -103,10 +100,7 @@ func (db *DB) TournamentRules(id int) (*TournamentRules, error) {
 	var rules TournamentRules
 	res := db.db.First(&rules)
 	if res.Error != nil {
-		if res.RecordNotFound() {
-			return nil, nil
-		}
-		return nil, res.Error
+		return nil, ignoreNotFound(res)
 	}
 	return &rules, nil
 }

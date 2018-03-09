@@ -28,7 +28,7 @@ func teams(c *http.Context, filters models.TeamFilters) {
 		c.Error(err)
 		return
 	}
-	c.SetJSON(200, teams)
+	c.SetJSON(teams, false)
 }
 
 func Team(c *http.Context) {
@@ -37,11 +37,7 @@ func Team(c *http.Context) {
 		c.Error(err)
 		return
 	}
-	if team == nil {
-		c.SetJSON(404, nil)
-	} else {
-		c.SetJSON(200, team)
-	}
+	c.SetJSON(team, team == nil)
 }
 
 func init() {

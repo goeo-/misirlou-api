@@ -41,10 +41,7 @@ func (db *DB) Team(id int) (*Team, error) {
 	var t Team
 	res := db.db.First(&t, id)
 	if res.Error != nil {
-		if res.RecordNotFound() {
-			return nil, nil
-		}
-		return nil, res.Error
+		return nil, ignoreNotFound(res)
 	}
 	return &t, nil
 }
