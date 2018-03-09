@@ -37,6 +37,11 @@ func POST(path string, handler func(c *Context)) {
 	handlers = append(handlers, reqHandler{"POST", path, handler})
 }
 
+// PUT registers a handler for a PUT request.
+func PUT(path string, handler func(c *Context)) {
+	handlers = append(handlers, reqHandler{"PUT", path, handler})
+}
+
 // Options is a struct which is embedded in every context and contains
 // information passed to the handlers directly by the main package.
 type Options struct {
@@ -184,6 +189,16 @@ func (c *Context) QueryInt(s string) int {
 func (c *Context) ParamInt(s string) int {
 	i, _ := strconv.Atoi(c.ctx.UserValue(s).(string))
 	return i
+}
+
+// JSON unmarshals the request's body into v, and returns any error.
+func (c *Context) JSON(v interface{}) error {
+	err := json.Unmarshal(c.ctx.Request.Body(), v)
+	if err != nil {
+		c.SetCode(400)
+		c.WriteString("Bad JSON: " + err.Error())
+	}
+	return err
 }
 
 var ipHeaders = [...][]byte{
