@@ -45,3 +45,25 @@ func (db *DB) Team(id int) (*Team, error) {
 	}
 	return &t, nil
 }
+
+// TeamMember represents a member of a team and information about their
+// relationship to the team.
+type TeamMember struct {
+	Team       int `json:"team"`
+	User       int `json:"user"`
+	Attributes int `json:"attributes"`
+}
+
+// TableName returns the correct table name so that it can correctly be used
+// by gorm.
+func (TeamMember) TableName() string {
+	return "team_users"
+}
+
+// TeamMembers retrieves all the members of a team.
+func (db *DB) TeamMembers(teamID, page int) ([]TeamMember, error) {
+	members := make([]TeamMember, 0, 50)
+	err := db.db.Offset(positivePage(page)*50).Limit(50).
+		Find(&members, "team = ?", teamID).Error
+	return members, err
+}

@@ -31,6 +31,7 @@ func teams(c *http.Context, filters models.TeamFilters) {
 	c.SetJSON(teams, false)
 }
 
+// Team retrieves a single team.
 func Team(c *http.Context) {
 	team, err := c.DB.Team(c.ParamInt("id"))
 	if err != nil {
@@ -40,8 +41,19 @@ func Team(c *http.Context) {
 	c.SetJSON(team, team == nil)
 }
 
+// TeamMembers retrieves all the members of a team.
+func TeamMembers(c *http.Context) {
+	members, err := c.DB.TeamMembers(c.ParamInt("id"), c.QueryInt("p"))
+	if err != nil {
+		c.Error(err)
+		return
+	}
+	c.SetJSON(members, false)
+}
+
 func init() {
 	http.GET("/tournaments/:id/teams", TeamsInTournament)
 	http.GET("/teams", Teams)
 	http.GET("/teams/:id", Team)
+	http.GET("/teams/:id/members", TeamMembers)
 }
