@@ -208,9 +208,15 @@ func (c *Context) Query(s string) string {
 	return string(c.ctx.QueryArgs().PeekBytes(s2b(s)))
 }
 
-// QueryInt retrieves a value from the query int, and parses it as an int.
+// QueryInt retrieves a value from the querystring, and parses it as an int.
 func (c *Context) QueryInt(s string) int {
 	i, _ := strconv.Atoi(c.Query(s))
+	return i
+}
+
+// QueryID retrieves a value from the querystring, and parses it as an ID.
+func (c *Context) QueryID(s string) (i models.ID) {
+	i.UnmarshalText(c.ctx.QueryArgs().PeekBytes(s2b(s)))
 	return i
 }
 
@@ -218,6 +224,13 @@ func (c *Context) QueryInt(s string) int {
 // it as an int.
 func (c *Context) ParamInt(s string) int {
 	i, _ := strconv.Atoi(c.ctx.UserValue(s).(string))
+	return i
+}
+
+// ParamID takes a named parameter set in the route of the request, and parses
+// it as an ID.
+func (c *Context) ParamID(s string) (i models.ID) {
+	i.UnmarshalText([]byte(c.ctx.UserValue(s).(string)))
 	return i
 }
 

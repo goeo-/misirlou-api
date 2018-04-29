@@ -1,23 +1,18 @@
 package models
 
-import (
-	"time"
-)
-
 // Team represents a team playing in Misirlou.
 type Team struct {
-	ID         int       `json:"id"`
-	Name       string    `json:"name"`
-	Tournament int       `json:"tournament"`
-	Captain    int       `json:"captain"`
-	CreatedAt  time.Time `json:"created_at"`
+	ID         ID     `json:"id"`
+	Name       string `json:"name"`
+	Tournament int    `json:"tournament"`
+	Captain    int    `json:"captain"`
 }
 
 // TODO: we should check that the team's tournament status is not 0.
 
 // TeamFilters are options that can be passed to Teams for filtering teams.
 type TeamFilters struct {
-	Tournament      int
+	Tournament      ID
 	ForceTournament bool
 	Member          int
 }
@@ -37,9 +32,9 @@ func (db *DB) Teams(filters TeamFilters, page int) ([]Team, error) {
 }
 
 // Team returns a single team knowing its ID.
-func (db *DB) Team(id int) (*Team, error) {
+func (db *DB) Team(id ID) (*Team, error) {
 	var t Team
-	res := db.db.First(&t, id)
+	res := db.db.First(&t, "id = ?", id)
 	if res.Error != nil {
 		return nil, ignoreNotFound(res)
 	}
@@ -61,7 +56,7 @@ func (TeamMember) TableName() string {
 }
 
 // TeamMembers retrieves all the members of a team.
-func (db *DB) TeamMembers(teamID, page int) ([]TeamMember, error) {
+func (db *DB) TeamMembers(teamID ID, page int) ([]TeamMember, error) {
 	members := make([]TeamMember, 0, 50)
 	err := db.db.Offset(positivePage(page)*50).Limit(50).
 		Find(&members, "team = ?", teamID).Error

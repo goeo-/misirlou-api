@@ -16,7 +16,7 @@ func Tournaments(c *http.Context) {
 
 // Tournament retrieves a single tournament knowing its ID.
 func Tournament(c *http.Context) {
-	tourn, err := c.DB.Tournament(c.ParamInt("id"))
+	tourn, err := c.DB.Tournament(c.ParamID("id"))
 	if err != nil {
 		c.Error(err)
 		return
@@ -26,7 +26,7 @@ func Tournament(c *http.Context) {
 
 // TournamentRules fetches the rules of a tournament.
 func TournamentRules(c *http.Context) {
-	rules, err := c.DB.TournamentRules(c.ParamInt("id"))
+	rules, err := c.DB.TournamentRules(c.ParamID("id"))
 	if err != nil {
 		c.Error(err)
 		return

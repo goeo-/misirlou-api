@@ -19,6 +19,8 @@ func (m *rawMessageSQL) Scan(value interface{}) error {
 		s = v
 	case []byte:
 		s = string(v)
+	case nil:
+		s = "null"
 	default:
 		return errNotAString
 	}
@@ -40,12 +42,15 @@ func (m *rawMessageSQL) UnmarshalJSON(data []byte) error {
 }
 
 func (m rawMessageSQL) MarshalJSON() ([]byte, error) {
+	if m == "" {
+		return []byte("null"), nil
+	}
 	return []byte(m), nil
 }
 
 // Tournament represents a tournament managed by Misirlou.
 type Tournament struct {
-	ID                int           `json:"id"`
+	ID                ID            `json:"id"`
 	Name              string        `json:"name"`
 	Description       string        `json:"description"`
 	Mode              int           `json:"mode"`
@@ -56,7 +61,6 @@ type Tournament struct {
 	ExclusivityStarts time.Time     `json:"exclusivity_starts"`
 	ExclusivityEnds   time.Time     `json:"exclusivity_ends"`
 	UpdatedAt         time.Time     `json:"updated_at"`
-	CreatedAt         time.Time     `json:"created_at"`
 }
 
 // Tournaments returns the tournaments sorted by their ID.
@@ -68,9 +72,9 @@ func (db *DB) Tournaments(page int) ([]Tournament, error) {
 }
 
 // Tournament returns a single tournament knowing its ID.
-func (db *DB) Tournament(id int) (*Tournament, error) {
+func (db *DB) Tournament(id ID) (*Tournament, error) {
 	var t Tournament
-	res := db.db.Where("status != 0").First(&t, id)
+	res := db.db.Where("status != 0").First(&t, "id = ?", id)
 	if res.Error != nil {
 		return nil, ignoreNotFound(res)
 	}
@@ -85,7 +89,7 @@ type TournamentRules struct {
 }
 
 // TournamentRules returns the tournament rules for the given tournament.
-func (db *DB) TournamentRules(id int) (*TournamentRules, error) {
+func (db *DB) TournamentRules(id ID) (*TournamentRules, error) {
 	// make sure the status of the tournament is not 0
 	var status []int
 	err := db.db.Table("tournaments").Where("id = ?", id).
