@@ -4,8 +4,27 @@
 [[projects]]
   branch = "master"
   name = "github.com/erikdubbelboer/fasthttp"
-  packages = [".","fasthttputil","stackless"]
+  packages = [
+    ".",
+    "fasthttputil",
+    "stackless"
+  ]
   revision = "34f277ffbd84ab45fde698c5b251a6c3acf222f3"
+
+[[projects]]
+  name = "github.com/go-redis/redis"
+  packages = [
+    ".",
+    "internal",
+    "internal/consistenthash",
+    "internal/hashtag",
+    "internal/pool",
+    "internal/proto",
+    "internal/singleflight",
+    "internal/util"
+  ]
+  revision = "877867d2845fbaf86798befe410b6ceb6f5c29a3"
+  version = "v6.10.2"
 
 [[projects]]
   name = "github.com/go-sql-driver/mysql"
@@ -14,8 +33,17 @@
   version = "v1.3"
 
 [[projects]]
+  name = "github.com/golang/protobuf"
+  packages = ["proto"]
+  revision = "925541529c1fa6821df4e44ce2723319eb2be768"
+  version = "v1.0.0"
+
+[[projects]]
   name = "github.com/jinzhu/gorm"
-  packages = [".","dialects/mysql"]
+  packages = [
+    ".",
+    "dialects/mysql"
+  ]
   revision = "6ed508ec6a4ecb3531899a69cbc746ccf65a4166"
   version = "v1.9.1"
 
@@ -27,7 +55,11 @@
 
 [[projects]]
   name = "github.com/klauspost/compress"
-  packages = ["flate","gzip","zlib"]
+  packages = [
+    "flate",
+    "gzip",
+    "zlib"
+  ]
   revision = "6c8db69c4b49dd4df1fff66996cf556176d0b9bf"
   version = "v1.2.1"
 
@@ -55,9 +87,47 @@
   packages = ["."]
   revision = "e746df99fe4a3986f4d4f79e13c1e0117ce9c2f7"
 
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/net"
+  packages = [
+    "context",
+    "context/ctxhttp"
+  ]
+  revision = "5f9ae10d9af5b1c89ae6904293b14b064d4ada23"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/oauth2"
+  packages = [
+    ".",
+    "internal"
+  ]
+  revision = "6881fee410a5daf86371371f9ad451b95e168b71"
+
+[[projects]]
+  name = "google.golang.org/appengine"
+  packages = [
+    "internal",
+    "internal/base",
+    "internal/datastore",
+    "internal/log",
+    "internal/remote_api",
+    "internal/urlfetch",
+    "urlfetch"
+  ]
+  revision = "150dc57a1b433e64154302bdc40b6bb8aefa313a"
+  version = "v1.0.0"
+
+[[projects]]
+  branch = "master"
+  name = "zxq.co/x/ripple"
+  packages = ["."]
+  revision = "9dcbf9cb79c35b48206876d9733080cc2f986096"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "38042664f8e88a691393fc94467eec4408a96b7e21d65b8dbbe63e48cc36b8ef"
+  inputs-digest = "c7d6c0e77237300737881bbbec4090fb990cd9f8698c19f8f41ecac46e7922f5"
   solver-name = "gps-cdcl"
   solver-version = 1

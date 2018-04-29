@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/erikdubbelboer/fasthttp"
+	"github.com/go-redis/redis"
 	"github.com/thehowl/fasthttprouter"
 	"zxq.co/ripple/misirlou-api/models"
 )
@@ -45,7 +46,15 @@ func PUT(path string, handler func(c *Context)) {
 // Options is a struct which is embedded in every context and contains
 // information passed to the handlers directly by the main package.
 type Options struct {
-	DB *models.DB
+	DB    *models.DB
+	Redis *redis.Client
+
+	OAuth2ClientID     string
+	OAuth2ClientSecret string
+
+	BaseURL        string
+	StoreTokensURL string
+	HTTPS          bool
 }
 
 // Handler creates an HTTP request handler using httprouter.
@@ -173,14 +182,35 @@ func (c *Context) SetJSON(v interface{}, is404 bool) {
 	c.SetJSONWithCode(v, code)
 }
 
+// SetCookie sets a cookie in the user's browser.
+func (c *Context) SetCookie(k, v string, expire time.Duration) {
+	cookie := fasthttp.AcquireCookie()
+	cookie.SetKey(k)
+	cookie.SetValue(v)
+	cookie.SetExpire(time.Now().Add(expire))
+	cookie.SetSecure(c.HTTPS)
+	c.ctx.Response.Header.SetCookie(cookie)
+	fasthttp.ReleaseCookie(cookie)
+}
+
+// DeleteCookie removes a cookie from the client.
+func (c *Context) DeleteCookie(k string) {
+	c.ctx.Response.Header.DelClientCookie(k)
+}
+
+// Redirect redirects the client to the given page, using the given response code.
+func (c *Context) Redirect(code int, location string) {
+	c.ctx.Redirect(location, code)
+}
+
 // Query retrieves a value from the query string.
-func (c *Context) Query(s string) []byte {
-	return c.ctx.QueryArgs().PeekBytes(s2b(s))
+func (c *Context) Query(s string) string {
+	return string(c.ctx.QueryArgs().PeekBytes(s2b(s)))
 }
 
 // QueryInt retrieves a value from the query int, and parses it as an int.
 func (c *Context) QueryInt(s string) int {
-	i, _ := strconv.Atoi(b2s(c.Query(s)))
+	i, _ := strconv.Atoi(c.Query(s))
 	return i
 }
 
@@ -199,6 +229,11 @@ func (c *Context) JSON(v interface{}) error {
 		c.WriteString("Bad JSON: " + err.Error())
 	}
 	return err
+}
+
+// Cookie returns the requested cookie.
+func (c *Context) Cookie(s string) string {
+	return string(c.ctx.Request.Header.Cookie(s))
 }
 
 var ipHeaders = [...][]byte{
