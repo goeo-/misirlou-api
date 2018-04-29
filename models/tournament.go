@@ -48,19 +48,42 @@ func (m rawMessageSQL) MarshalJSON() ([]byte, error) {
 	return []byte(m), nil
 }
 
+// TournamentStatus represents one of the statuses of the tournament, as
+// described in the constants
+type TournamentStatus int
+
+// A tournament will always be in one of these states.
+const (
+	// StatusOrganising means the tournament is currently private as the owner
+	// needs to create the rules, staff, etc.
+	StatusOrganising TournamentStatus = iota
+	// StatusOpen means the tournament currently accepts new teams.
+	StatusOpen
+	// StatusRegsClosed means that registrations for the tournament have been
+	// closed, and we're waiting for a bracket.
+	StatusRegsClosed
+	// StatusAwaitRound means we're waiting for the next round of the tournament.
+	StatusAwaitRound
+	// StatusPlaying means the tournament game is currently being played (so, for
+	// instance, we need to allow inputs of results of games from referees).
+	StatusPlaying
+	// StatusClosed means the tournament has been terminated.
+	StatusClosed
+)
+
 // Tournament represents a tournament managed by Misirlou.
 type Tournament struct {
-	ID                ID            `json:"id"`
-	Name              string        `json:"name"`
-	Description       string        `json:"description"`
-	Mode              int           `json:"mode"`
-	Status            int           `json:"status"`
-	StatusData        rawMessageSQL `json:"status_data"`
-	TeamSize          int           `json:"team_size"`
-	MinTeamSize       int           `json:"min_team_size"`
-	ExclusivityStarts time.Time     `json:"exclusivity_starts"`
-	ExclusivityEnds   time.Time     `json:"exclusivity_ends"`
-	UpdatedAt         time.Time     `json:"updated_at"`
+	ID                ID               `json:"id"`
+	Name              string           `json:"name"`
+	Description       string           `json:"description"`
+	Mode              int              `json:"mode"`
+	Status            TournamentStatus `json:"status"`
+	StatusData        rawMessageSQL    `json:"status_data"`
+	TeamSize          int              `json:"team_size"`
+	MinTeamSize       int              `json:"min_team_size"`
+	ExclusivityStarts time.Time        `json:"exclusivity_starts"`
+	ExclusivityEnds   time.Time        `json:"exclusivity_ends"`
+	UpdatedAt         time.Time        `json:"updated_at"`
 }
 
 // Tournaments returns the tournaments sorted by their ID.
