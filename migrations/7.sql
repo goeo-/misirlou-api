@@ -1,5 +1,5 @@
 CREATE TABLE feed_items(
-	id BIGINT NOT NULL AUTO_INCREMENT,
+	id BIGINT NOT NULL,
 	tournament BIGINT NOT NULL,
 	content TEXT NOT NULL,
 	author INT,

@@ -1,7 +1,7 @@
 ALTER TABLE tournament_rules ADD PRIMARY KEY(id);
 
 CREATE TABLE beatmap_requests(
-	id BIGINT NOT NULL AUTO_INCREMENT,
+	id BIGINT NOT NULL,
 	tournament BIGINT NOT NULL,
 	user INT NOT NULL,
 	beatmap INT NOT NULL,
