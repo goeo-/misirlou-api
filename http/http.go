@@ -134,10 +134,26 @@ func (c *Context) reportError(err error) {
 	fmt.Fprintln(os.Stderr, err)
 }
 
+// ResponseError can be passed to Error, and instead of returning a 500, it will
+// return a response with the code and the message specified.
+type ResponseError struct {
+	Code    int
+	Message string
+}
+
+func (re *ResponseError) Error() string {
+	return re.Message
+}
+
 // Error closes the request with a 500 code and prints the error to stderr.
 func (c *Context) Error(err error) {
+	if re, ok := err.(*ResponseError); ok {
+		c.SetCode(re.Code)
+		c.WriteString(re.Message + "\n")
+		return
+	}
 	c.SetCode(500)
-	c.WriteString("Internal Server Error")
+	c.WriteString("Internal Server Error\n")
 	c.reportError(err)
 }
 

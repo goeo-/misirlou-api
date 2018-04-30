@@ -104,10 +104,45 @@ func (db *DB) Tournament(id ID) (*Tournament, error) {
 	return &t, nil
 }
 
+// UserInTournament checks whether an user is taking part in a tournament.
+func (db *DB) UserInTournament(tournID ID, userID int) (bool, error) {
+	var i []int
+	err := db.db.Raw(`SELECT COUNT(*) as c FROM teams
+	INNER JOIN team_users ON teams.id = team_users.team
+	WHERE teams.tournament = ? AND team_users.user = ? AND team_users.attributes > 0
+	LIMIT 1`, tournID, userID).Pluck("c", &i).Error
+	return len(i) > 0 && i[0] > 0, err
+}
+
+// UserIsBusy checks whether the user is 'busy' with another tournament during
+// the period in which they would play in the tournament.
+func (db *DB) UserIsBusy(tourn *Tournament, userID int) (bool, error) {
+	var i []int
+	// We check if another tournament overlaps with ours.
+	// In plain words: we check if the given user (team_users.user = ?)
+	// takes part (team_users.attributes > 0) in another (tournaments.id != ?)
+	// tournament that begins while our tournament is in session OR
+	// our tournament begins while another tournament is in session.
+	err := db.db.Raw(
+		`SELECT COUNT(*) as c FROM team_users
+	INNER JOIN teams ON teams.id = team_users.team
+	INNER JOIN tournaments ON teams.tournament = tournaments.id
+	WHERE
+		team_users.user = ? AND team_users.attributes > 0 AND
+		tournaments.id != ? AND
+		((tournaments.exclusivity_starts >= ? AND tournaments.exclusivity_starts <= ?) OR
+		 (tournaments.exclusivity_ends >= ? AND tournaments.exclusivity_starts <= ?))
+	LIMIT 1`,
+		userID, tourn.ID, tourn.ExclusivityStarts, tourn.ExclusivityEnds,
+		tourn.ExclusivityStarts, tourn.ExclusivityStarts,
+	).Pluck("c", &i).Error
+	return len(i) > 0 && i[0] > 0, err
+}
+
 // TournamentRules represents a collection rules set out for a given tournament,
 // which is represented by the ID field in the struct.
 type TournamentRules struct {
-	ID    int    `json:"id"`
+	ID    ID     `json:"id"`
 	Rules string `json:"rules"`
 }
 
@@ -136,6 +171,6 @@ func (db *DB) TournamentRules(id ID) (*TournamentRules, error) {
 // tournament.
 type TournamentStaff struct {
 	ID         int `json:"id"`
-	Tournament int `json:"tournament"`
+	Tournament ID  `json:"tournament"`
 	Privileges int `json:"privileges"`
 }

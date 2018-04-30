@@ -3,7 +3,9 @@ package api
 import (
 	"context"
 	"crypto/rand"
+	"crypto/sha256"
 	"encoding/base64"
+	"encoding/hex"
 	"time"
 
 	"golang.org/x/oauth2"
@@ -91,9 +93,13 @@ func OAuthFinish(c *http.Context) {
 		return
 	}
 
+	// token is a random set of characters which is stored in DB as a sha256 hash
+	token := randomStr(30)
+	token256 := sha256.Sum256([]byte(token))
+
 	// Save session
 	sess := &models.Session{
-		ID:          randomStr(15),
+		ID:          hex.EncodeToString(token256[:]),
 		UserID:      u.ID,
 		AccessToken: code.AccessToken,
 	}
@@ -103,7 +109,7 @@ func OAuthFinish(c *http.Context) {
 		return
 	}
 
-	c.Redirect(302, c.StoreTokensURL+"?session="+sess.ID+"&access="+sess.AccessToken)
+	c.Redirect(302, c.StoreTokensURL+"?session="+token+"&access="+sess.AccessToken)
 }
 
 func init() {

@@ -2,8 +2,11 @@ package models
 
 import (
 	"encoding/base64"
+	"reflect"
 	"sync/atomic"
 	"time"
+
+	"github.com/jinzhu/gorm"
 )
 
 // ID is the ID of a single resource. IDs are similar to Snowflake IDs, in that
@@ -117,4 +120,32 @@ func (i ID) String() string {
 // the first 49 bits of the ID.
 func (i ID) Time() time.Time {
 	return time.Unix(0, int64((i<<4)&timeBits))
+}
+
+// Register gorm callback for generating IDs when they are blank.
+func init() {
+	gorm.DefaultCallback.Create().Before("gorm:before_create").
+		Register("snowflake:generate_id", generateID)
+}
+
+var idType = reflect.TypeOf(ID(0))
+
+func generateID(scope *gorm.Scope) {
+	if scope.HasError() {
+		return
+	}
+	field, ok := scope.FieldByName("ID")
+	if !ok {
+		return
+	}
+	if !field.IsBlank {
+		return
+	}
+	if !idType.AssignableTo(field.Field.Type()) {
+		return
+	}
+	err := field.Set(GenerateID())
+	if err != nil {
+		scope.Err(err)
+	}
 }

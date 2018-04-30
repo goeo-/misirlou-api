@@ -1,6 +1,10 @@
 package models
 
-import "errors"
+import (
+	"errors"
+
+	"zxq.co/x/ripple"
+)
 
 // Session represents a single user session of an user who has authenticated
 // on Misirlou.
@@ -27,4 +31,13 @@ func (db *DB) SetSession(sess *Session) error {
 		return errors.New("sess is nil")
 	}
 	return db.db.Save(sess).Error
+}
+
+// RippleClient obtains a new ripple.Client to fetch information about the
+// user.
+func (s Session) RippleClient() *ripple.Client {
+	return &ripple.Client{
+		IsBearer: true,
+		Token:    s.AccessToken,
+	}
 }

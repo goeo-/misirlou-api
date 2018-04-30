@@ -4,11 +4,9 @@ package models
 type Team struct {
 	ID         ID     `json:"id"`
 	Name       string `json:"name"`
-	Tournament int    `json:"tournament"`
+	Tournament ID     `json:"tournament"`
 	Captain    int    `json:"captain"`
 }
-
-// TODO: we should check that the team's tournament status is not 0.
 
 // TeamFilters are options that can be passed to Teams for filtering teams.
 type TeamFilters struct {
@@ -41,12 +39,28 @@ func (db *DB) Team(id ID) (*Team, error) {
 	return &t, nil
 }
 
+// CreateTeam creates a new team, which is to say, registers in a tournament.
+func (db *DB) CreateTeam(t *Team) error {
+	return db.db.Create(t).Error
+}
+
+// TeamAttributes represents the attributes a user may have inside of a team,
+// such as being invited, a member, or a captain.
+type TeamAttributes int
+
+// Various TeamAttributes a team member might have.
+const (
+	TeamAttributeInvited TeamAttributes = iota
+	TeamAttributeMember
+	TeamAttributeCaptain
+)
+
 // TeamMember represents a member of a team and information about their
 // relationship to the team.
 type TeamMember struct {
-	Team       int `json:"team"`
-	User       int `json:"user"`
-	Attributes int `json:"attributes"`
+	Team       ID             `json:"team"`
+	User       int            `json:"user"`
+	Attributes TeamAttributes `json:"attributes"`
 }
 
 // TableName returns the correct table name so that it can correctly be used
@@ -61,4 +75,16 @@ func (db *DB) TeamMembers(teamID ID, page int) ([]TeamMember, error) {
 	err := db.db.Offset(positivePage(page)*50).Limit(50).
 		Find(&members, "team = ?", teamID).Error
 	return members, err
+}
+
+// AddTeamMembers adds the given team members to the database.
+func (db *DB) AddTeamMembers(ms []TeamMember) error {
+	// not using for-range because this way we can keep the reference
+	// straight into the slice
+	for i := 0; i < len(ms); i++ {
+		if err := db.db.Create(&ms[i]).Error; err != nil {
+			return err
+		}
+	}
+	return nil
 }
