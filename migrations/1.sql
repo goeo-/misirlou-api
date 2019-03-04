@@ -1,10 +1,11 @@
 CREATE TABLE tournaments(
-	id BIGINT NOT NULL,
+	id INT NOT NULL AUTO_INCREMENT,
 	name VARCHAR(60) NOT NULL,
 	description VARCHAR(250) NOT NULL,
 	mode TINYINT(1) NOT NULL,
 	status TINYINT(2) NOT NULL,
 	status_data VARCHAR(800),
+	created_at DATETIME NOT NULL,
 	updated_at DATETIME NOT NULL,
 	PRIMARY KEY(id)
 );

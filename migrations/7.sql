@@ -1,7 +1,8 @@
 CREATE TABLE feed_items(
-	id BIGINT NOT NULL,
-	tournament BIGINT NOT NULL,
+	id INT NOT NULL AUTO_INCREMENT,
+	tournament INT NOT NULL,
 	content TEXT NOT NULL,
+	created_at DATETIME NOT NULL,
 	author INT,
 	PRIMARY KEY(id),
 	FOREIGN KEY(tournament) REFERENCES tournaments(id)

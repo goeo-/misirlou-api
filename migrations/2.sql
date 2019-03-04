@@ -1,5 +1,5 @@
 CREATE TABLE tournament_rules(
-	id BIGINT NOT NULL,
+	id INT NOT NULL,
 	rules TEXT NOT NULL,
 	FOREIGN KEY (id) REFERENCES tournaments (id)
 		ON DELETE CASCADE
